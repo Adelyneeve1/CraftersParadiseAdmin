@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Dashboard</title>
+  <link rel="stylesheet" href="dashboard.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
+  <script src="https://cdn.amcharts.com/lib/5/xy.js"></script>
+  <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
+</head>
+<body>
+  <div id="spinner-overlay" class="spinner-overlay">
+    <img src="images/logoo.png" alt="Loading..." class="loading-logo">
+  </div>
+  
+  <header class="header">
+    <img src="images/logoo.png" alt="Logo" class="logo" />
+    <h1 class="site-name">Crafters Paradise</h1>
+  </header>
+ <div class="container">
+    <aside class="sidebar">
+      <div class="user-info">
+        <img id="user-img" src="images/default-avatar.png" class="user-avatar" />
+        <h3 id="user-name">Loading...</h3>
+        <p id="user-role">Administrator</p>
+      </div>
+      <nav class="nav-menu">
+        <ul>
+          <li><a href="dashboard.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+          <li><a href="users.html"><i class="fas fa-users"></i> Users</a></li>
+          <li><a href="subscription.html"><i class="fas fa-box"></i> Subscription</a></li>
+          <li><a href="settings.html"><i class="fas fa-cogs"></i> Settings</a></li>
+        </ul>
+      </nav>
+      <a href="login.html" class="logout-btn">LOGOUT</a>
+    </aside>
+
+    <div class="dashboard-layout">
+      <div class="dashboard-main">
+        <div class="greeting" id="greeting-message"></div>
+        <div class="chart-container">
+          <h3>Registration Users</h3>
+          <div id="signupChart" style="width: 100%; height: 500px;"></div>
+        </div>
+      </div>
+
+      <div class="dashboard-side">
+        <div class="dashboard-cards">
+          <div class="card-container artisan card"><h2>Artisans</h2><p>0</p></div>
+          <div class="card-container buyers card"><h2>Buyers</h2><p>0</p></div>
+          <div class="card-container owners card"><h2>Business Owners</h2><p>0</p></div>
+          <div class="card-container asubs card"><h2>Active Subscriptions</h2><p>0</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+    import { getDatabase, ref, get, child } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+  
+    const firebaseConfig = {
+      apiKey: "AIzaSyCdp-AWmi1GrcrCYrEcog6rfhRygrt0uRc",
+      authDomain: "craftersparadise-8c962.firebaseapp.com",
+      projectId: "craftersparadise-8c962",
+      storageBucket: "craftersparadise-8c962.appspot.com",
+      messagingSenderId: "419818070255",
+      appId: "1:419818070255:web:434b87d32020bf3aa67b1a",
+      databaseURL: "https://craftersparadise-8c962-default-rtdb.firebaseio.com"
+    };
+  
+    const app = initializeApp(firebaseConfig);
+    const dbRT = getDatabase(app);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+  
+    function hideSpinner() {
+      const spinnerOverlay = document.getElementById('spinner-overlay');
+      if (spinnerOverlay) {
+        spinnerOverlay.style.display = 'none';
+      }
+    }
+  
+    async function fetchDashboardStats() {
+      const dbRef = ref(dbRT);
+      const snapshot = await get(child(dbRef, '/'));
+      const data = snapshot.val();
+      const users = data?.users || {};
+      let artisans = 0, buyers = 0, owners = 0, activeSubs = 0;
+  
+      Object.values(users).forEach(user => {
+        const type = (user.userType || '').toLowerCase();
+        if (type === 'artisan') artisans++;
+        else if (type === 'buyer') buyers++;
+        else if (type === 'businessowner' || type === 'business owner') owners++;
+  
+        if ((user.subscriptionStatus || '').toLowerCase() === 'active') {
+          activeSubs++;
+        }
+      });
+  
+      document.querySelector('.artisan.card p').textContent = artisans;
+      document.querySelector('.buyers.card p').textContent = buyers;
+      document.querySelector('.owners.card p').textContent = owners;
+      document.querySelector('.asubs.card p').textContent = activeSubs;
+    }
+  
+    async function updateSignupChart() {
+      const snapshot = await get(child(ref(dbRT), '/users'));
+      const users = snapshot.val();
+      let artisanCount = 0, buyerCount = 0, ownerCount = 0;
+  
+      Object.values(users).forEach(user => {
+        const type = (user.userType || '').toLowerCase();
+        if (type === 'artisan') artisanCount++;
+        else if (type === 'buyer') buyerCount++;
+        else if (type === 'businessowner' || type === 'business owner') ownerCount++;
+      });
+  
+      return new Promise((resolve) => {
+        am5.ready(() => {
+          const root = am5.Root.new("signupChart");
+          root.setThemes([am5themes_Animated.new(root)]);
+          const chart = root.container.children.push(am5xy.XYChart.new(root, {
+            panX: true, panY: true, wheelX: "panX", wheelY: "zoomX", layout: root.verticalLayout
+          }));
+  
+          const xAxis = chart.xAxes.push(am5xy.CategoryAxis.new(root, {
+            categoryField: "userType",
+            renderer: am5xy.AxisRendererX.new(root, { minGridDistance: 30 })
+          }));
+  
+          const yAxis = chart.yAxes.push(am5xy.ValueAxis.new(root, {
+            renderer: am5xy.AxisRendererY.new(root, {})
+          }));
+  
+          const series = chart.series.push(am5xy.ColumnSeries.new(root, {
+            name: "Users",
+            xAxis: xAxis,
+            yAxis: yAxis,
+            valueYField: "count",
+            categoryXField: "userType",
+            clustered: false,
+            tooltip: am5.Tooltip.new(root, { labelText: "{valueY}" })
+          }));
+  
+          const data = [
+            { userType: "Artisan", count: artisanCount, fill: am5.color("#6B8E23") },
+            { userType: "Buyer", count: buyerCount, fill: am5.color("#D2B48C") },
+            { userType: "Business Owner", count: ownerCount, fill: am5.color("#8B5E3C") }
+          ];
+  
+          xAxis.data.setAll(data);
+          series.data.setAll(data);
+  
+          series.columns.template.adapters.add("fill", (fill, target) => target.dataItem.dataContext.fill);
+          series.columns.template.adapters.add("stroke", (stroke, target) => target.dataItem.dataContext.fill);
+  
+          chart.appear(1000, 100);
+  
+          resolve(); // resolve when chart is drawn
+        });
+      });
+    }
+  
+    document.addEventListener('DOMContentLoaded', () => {
+      onAuthStateChanged(auth, async (user) => {
+        if (!user) {
+          window.location.href = 'login.html';
+          return;
+        }
+  
+        try {
+          const adminDoc = await getDoc(doc(db, "admins", user.uid));
+          if (adminDoc.exists()) {
+            const admin = adminDoc.data();
+            const name = admin.fullname || 'Admin';
+            document.getElementById('user-name').textContent = name;
+            document.getElementById('user-role').textContent = admin.role || 'Administrator';
+            document.getElementById('user-img').src = admin.profilepic || 'images/default-avatar.png';
+  
+            const hour = new Date().getHours();
+            let greeting = "Good evening";
+            if (hour < 12) greeting = "Good morning";
+            else if (hour < 18) greeting = "Good afternoon";
+            document.getElementById('greeting-message').textContent = `${greeting}, ${name}!`;
+  
+            // Wait for both data and chart before hiding spinner
+            await fetchDashboardStats();
+            await updateSignupChart();
+          }
+        } catch (err) {
+          console.error("Error during dashboard setup:", err);
+        } finally {
+          hideSpinner(); // Ensures spinner hides after data/chart load
+        }
+      });
+    });
+  </script>
+  
+</body>
+</html>

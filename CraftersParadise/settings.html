@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Settings</title>
+
+  <!-- External CSS -->
+  <link rel="stylesheet" href="settings.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+  <!-- Firebase Configuration and Initialization -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+    import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCdp-AWmi1GrcrCYrEcog6rfhRygrt0uRc",
+      authDomain: "craftersparadise-8c962.firebaseapp.com",
+      projectId: "craftersparadise-8c962",
+      storageBucket: "craftersparadise-8c962.appspot.com",
+      messagingSenderId: "419818070255",
+      appId: "1:419818070255:web:434b87d32020bf3aa67b1a"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // Function to load admin data
+    async function loadAdminData() {
+      const adminId = localStorage.getItem('adminId');
+      if (!adminId) {
+        alert('Not logged in!');
+        window.location.href = 'login.html';
+        return;
+      }
+
+      try {
+        const adminRef = doc(db, "admins", adminId);
+        const adminSnap = await getDoc(adminRef);
+
+        if (adminSnap.exists()) {
+          const adminData = adminSnap.data();
+
+          // Set profile picture
+          document.getElementById('profile-picture').src = adminData.profilepic || 'images/default-profile.png';
+
+          // Set input field values
+          document.getElementById('name').value = adminData.fullname || '';
+
+          // Set display TextView (h2 and p)
+          document.getElementById('admin-name-display').textContent = adminData.fullname || 'Full Name';
+          document.getElementById('admin-email-display').textContent = adminData.email || 'email@example.com';
+
+        } else {
+          alert('Admin data not found!');
+        }
+      } catch (error) {
+        console.error('Error loading admin data:', error);
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      loadAdminData();
+
+      const fileInput = document.createElement('input');
+      fileInput.type = 'file';
+      fileInput.accept = 'image/*';
+      fileInput.style.display = 'none';
+      document.body.appendChild(fileInput);
+
+      document.getElementById('change-picture-btn').addEventListener('click', () => {
+        fileInput.click();
+      });
+
+      fileInput.addEventListener('change', (event) => {
+        const file = event.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            document.getElementById('profile-picture').src = e.target.result;
+          };
+          reader.readAsDataURL(file);
+        }
+      });
+
+      document.getElementById('settings-form').addEventListener('submit', async (event) => {
+        event.preventDefault();
+
+        const name = document.getElementById('name').value.trim();
+        const profilepic = document.getElementById('profile-picture').src;
+        const adminId = localStorage.getItem('adminId');
+
+        if (!adminId) {
+          alert('Not logged in!');
+          return;
+        }
+
+        try {
+          const adminRef = doc(db, "admins", adminId);
+          await updateDoc(adminRef, {
+            fullname: name,
+            profilepic: profilepic
+          });
+
+          document.getElementById('admin-name-display').textContent = name;
+          alert('Settings updated successfully!');
+        } catch (error) {
+          console.error('Error updating settings:', error);
+          alert('Failed to update settings.');
+        }
+      });
+    });
+  </script>
+</head>
+<body>
+  
+  <header class="header">
+    <img src="images/logoo.png" alt="Logo" class="logo" />
+    <h1 class="site-name">Crafters Paradise</h1>
+  </header>
+
+  <div class="container">
+    <aside class="sidebar">
+      <nav class="nav-menu">
+        <ul>
+          <li><a href="dashboard.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+          <li><a href="users.html"><i class="fas fa-users"></i> Users</a></li>
+          <li><a href="subscription.html"><i class="fas fa-box"></i> Subscription</a></li>
+          <li><a href="settings.html" class="active"><i class="fas fa-cogs"></i> Settings</a></li>
+        </ul>
+      </nav>
+    </aside>
+
+    <div class="settings-container">
+      <div class="profile-section">
+        <img id="profile-picture" src="images/default-profile.png" alt="Admin Profile Picture">
+        <button id="change-picture-btn" type="button">Change Picture</button>
+
+        <div class="admin-info-display">
+          <h2 id="admin-name-display">Full Name</h2>
+          <p id="admin-email-display">email@example.com</p>
+        </div>
+      </div>
+
+      <form id="settings-form">
+        <div class="form-group">
+          <label for="name">Name:</label>
+          <input type="text" id="name" name="name" placeholder="Enter your name">
+        </div>
+
+        <button type="submit" class="update-btn">Update Settings</button>
+      </form>
+    </div>
+  </div>
+</body>
+</html>

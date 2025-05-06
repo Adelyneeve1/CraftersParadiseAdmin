@@ -1,0 +1,383 @@
+:root {
+  --chart-bg: #bca28c;
+  --chart-bar-artisan: #755400;
+  --chart-bar-buyer: #9b7200;
+  --chart-bar-owner: #494134;
+  --chart-height: 500px;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f4f4f4;
+  color: #333;
+  margin: 0;
+}
+/* Spinner Always Visible Initially */
+.spinner-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(255, 255, 255, 0);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.loading-logo {
+  width: 320px;
+  height: 320px;
+  animation: spin 1.2s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+
+.header {
+  background-color: #754120;
+  color: white;
+ 
+  display: flex;
+  align-items: center;
+
+}
+
+.logo {
+  width: 300px;
+  height: 300px;
+  margin-top: -79px;
+  margin-bottom: -46px;
+  margin-left: -70px;
+
+}
+
+.site-name {
+  font-size: 50px;
+  letter-spacing: 10px;
+  font-weight: bolder;
+  margin-left: -50px;
+
+}
+
+.container {
+  display: flex;
+  min-height:82vh;
+}
+
+.sidebar {
+  width: 250px;
+  background-color: #5a3620;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+}
+
+.user-info {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.user-avatar {
+  width:  190px;
+  height: 190px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 10px;
+}
+
+#user-name {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+#user-role {
+  font-size: 14px;
+  color: #ccc;
+  margin-top: -10px;
+}
+
+.nav-menu ul {
+  list-style: none;
+  padding: 0;
+}
+
+.nav-menu ul li {
+  margin: 10px 0;
+}
+
+.nav-menu a {
+  color: white;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 14px;
+  margin-top: -10px;
+  font-size: larger;
+  border-radius: 5px;
+  transition: background 0.3s;
+}
+
+.nav-menu a:hover,
+.nav-menu a.active {
+  background-color: #754329;
+}
+
+.logout-btn {
+  margin-top: auto;
+  padding: 15px;
+  background-color: #bb2d2dcd;
+  color: white;
+ letter-spacing: 5px;
+  border:2px solid #ffffff;
+  text-align: center;
+  border-radius: 45px;
+  width: 60%;
+  margin-left: 50px;
+  text-decoration: none;
+}
+
+.dashboard-layout {
+  display: flex;
+  flex-wrap: wrap;
+  width: 80%;
+  gap: 20px;
+  padding: 20px;
+}
+
+.dashboard-main {
+  flex: 1 1 65%;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+
+}
+
+.dashboard-side {
+  flex: 1 1 30%;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.greeting {
+  font-size: 35px;
+  font-weight: 600;
+  background-color: #fdf6f1;
+  padding: 12px 20px;
+  border-radius: 12px;
+  width: 150%;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.chart-container {
+  background-color: var(--chart-bg);
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  width:120%;
+}
+
+#signupChart {
+  height: var(--chart-height);
+}
+
+.dashboard-cards {
+  display: flex;
+  flex-direction: column;
+  gap:20px;
+  width: 60%;
+  height: 50%;
+  padding:10px;
+  font-size: 55px;
+  margin-top: 80px;
+  margin-left: 270px;
+}
+.dashboard-cards h2{
+  font-size: 100%;
+  letter-spacing: 2px;
+
+}
+.dashboard-cards p{
+  margin-top: -10px;
+  color: #371803;
+
+}
+
+
+.card-container {
+  background-color: #bca28c;
+  border-radius: 16px;
+  padding: 10px;
+  height: 100px;
+  text-align: center;
+  color: white;
+  box-shadow: 0 4 px 20px rgba(0, 0, 0, 0.15);
+}
+
+.card-container h2 {
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+
+.card-container p {
+  font-size: 26px;
+  font-weight: bold;
+}
+/* Universal box-sizing and layout reset */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
+}
+
+/* Responsive Design Enhancements */
+@media (max-width: 1200px) {
+  .dashboard-layout {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .dashboard-main,
+  .dashboard-side {
+    width: 100% !important;
+    flex: 1 1 100%;
+  }
+
+  .greeting,
+  .chart-container {
+    width: 100%;
+  }
+
+  .dashboard-cards {
+    width: 100%;
+    margin-left: 0;
+    margin-top: 20px;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-around;
+  }
+
+  .card-container {
+    flex: 1 1 calc(45% - 20px);
+    margin: 10px;
+    height: auto;
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .sidebar {
+    width: 100%;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-around;
+  }
+
+  .nav-menu ul {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 100%;
+  }
+
+  .nav-menu ul li {
+    flex: 1 1 45%;
+    margin: 5px;
+  }
+
+  .user-info {
+    width: 100%;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+  .dashboard-layout {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .dashboard-side {
+    order: 1;
+    width: 100% !important;
+  }
+
+  .dashboard-main {
+    order: 2;
+    width: 100% !important;
+    margin-top: 20px;
+  }
+
+  .dashboard-cards {
+    flex-direction: column;
+    align-items: center;
+    margin: 0 auto;
+    width: 95%;
+  }
+
+  .card-container {
+    width: 100%;
+    margin-bottom: 20px;
+  }
+
+  .greeting,
+  .chart-container {
+    width: 100%;
+  }
+
+  .chart-container {
+    overflow-x: auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .site-name {
+    font-size: 20px;
+    letter-spacing: 1px;
+    margin-left: 0;
+  }
+
+  .logo {
+    width: 80px;
+    height: 80px;
+    margin: 0;
+  }
+
+  .dashboard-cards {
+    width: 100%;
+  }
+
+  .card-container h2 {
+    font-size: 14px;
+  }
+  .nav-menu ul {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .card-container p {
+    font-size: 18px;
+  }
+
+  .logout-btn {
+    width: 100%;
+    margin-left: 0;
+    margin-top: 10px;
+  }
+}

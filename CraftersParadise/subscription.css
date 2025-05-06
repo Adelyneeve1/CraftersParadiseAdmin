@@ -1,0 +1,260 @@
+:root {
+    --chart-bg: #bca28c;
+    --chart-bar-artisan: #755400;
+    --chart-bar-buyer: #9b7200;
+    --chart-bar-owner: #494134;
+    --chart-height: 500px;
+  }
+  
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+  
+  html, body {
+    height: 100%;
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f4f4f4;
+    color: #333;
+    overflow-x: hidden;
+  }
+  
+  .header {
+    background-color: #754120;
+    color: white;
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    height: 120px;
+  }
+  
+  .logo {
+    width: 200px;
+    height: 200px;
+    margin-top: -10px;
+    object-fit: contain;
+    margin-right: 20px;
+  }
+  .site-name {
+    font-size: 32px;
+    letter-spacing: 6px;
+    font-weight: bolder;
+  }
+  
+  .container {
+    display: flex;
+    height: calc(100vh - 120px);
+    width: 100%;
+    overflow: hidden;
+  }
+  
+  .sidebar {
+    width: 250px;
+    background-color: #5a3620;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    flex-shrink: 0;
+  }
+  
+ 
+  
+  .nav-menu ul {
+    list-style: none;
+    padding: 0;
+    margin: 10px 0;
+  }
+  
+  .nav-menu li {
+    margin: 10px 0;
+  }
+  
+  .nav-menu a {
+    display: flex;
+    align-items: center;
+    color: white;
+    text-decoration: none;
+    padding: 10px;
+    border-radius: 6px;
+    transition: background 0.3s;
+  }
+  
+  .nav-menu a:hover,
+  .nav-menu a.active {
+    background-color: #754329;
+  }
+  
+  
+  
+  /* MAIN CONTENT */
+  .main-content {
+    flex-grow: 1;
+    padding: 30px;
+    background-color: #f4f4f4;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+  }
+  
+  .main-content h2 {
+    font-size: 30px;
+    font-weight: 600;
+    color: #754120;
+    margin: 0;
+  }
+  
+  .table-section {
+    background-color: #fff;
+    border-radius: 16px;
+    padding: 20px;
+    margin-top: 20px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    width: 100%;
+  }
+  
+  .table-section h3 {
+    font-size: 22px;
+    color: #4a5568;
+    margin-bottom: 15px;
+  }
+  
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 16px;
+  }
+  
+  thead {
+    background-color: #f7f7f7;
+  }
+  
+  th, td {
+    text-align: left;
+    padding: 14px 16px;
+    border-bottom: 1px solid #e0e0e0;
+  }
+  
+  .status {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.85em;
+  }
+  
+  .status.active {
+    background-color: #c6f6d5;
+    color: #276749;
+  }
+  
+  .status.inactive {
+    background-color: #fed7d7;
+    color: #822727;
+  }
+  
+  button {
+    border: none;
+    padding: 8px 14px;
+    border-radius: 6px;
+    font-weight: bold;
+    font-size: 0.9em;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+  
+  button.cancel {
+    background-color: #e53e3e;
+    color: #fff;
+  }
+  
+  button.notify {
+    background-color: #a0aec0;
+    color: white;
+  }
+  
+  button.notify:disabled {
+    background-color: #e2e8f0;
+    color: #a0aec0;
+    cursor: not-allowed;
+  }
+  /* Universal box-sizing and layout reset */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
+}
+  /* Responsive Tweaks */
+  @media (max-width: 768px) {
+    .container {
+      flex-direction: column;
+    }
+  
+    .main-content {
+      padding: 10px;
+    }
+  
+    .table-section {
+      padding: 10px;
+    }
+  
+    table {
+      font-size: 14px;
+    }
+    .sidebar {
+      width: 100%;
+        background-color: #5a3620;
+        color: white;
+        display: flex;
+        flex-direction: column;
+        padding: 20px;
+        flex-shrink: 0;
+      }
+      .table-section {
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 16px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        margin: 20px auto;
+        width: 100%;
+        max-width: 1000px; /* keeps table nicely readable even on wide screens */
+        overflow-x: auto;
+      }
+      
+      .table-section table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 16px;
+      }
+      
+      .table-section thead {
+        background-color: #5a3620;
+        color: white;
+      }
+      
+      .table-section th,
+      .table-section td {
+        text-align: left;
+        padding: 14px 16px;
+        border-bottom: 1px solid #ddd;
+      }
+      
+      .table-section tr:nth-child(even) {
+        background-color: #f9f9f9;
+      }
+      
+      .table-section tr:hover {
+        background-color: #f0e9e1;
+        transition: background 0.2s ease-in-out;
+      }
+      
+  }
+  

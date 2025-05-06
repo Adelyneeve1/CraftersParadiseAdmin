@@ -1,0 +1,204 @@
+:root {
+  --chart-bg: #bca28c;
+  --chart-bar-artisan: #755400;
+  --chart-bar-buyer: #9b7200;
+  --chart-bar-owner: #494134;
+  --chart-height: 500px;
+}
+
+/* Universal Box Sizing */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* Global Layout */
+html, body {
+  height: 100%;
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f4f4f4;
+  color: #333;
+  overflow-x: hidden;
+}
+
+/* ===================================== */
+/* Header Styles */
+/* ===================================== */
+.header {
+  background-color: #754120;
+  color: white;
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  height: 160px;
+}
+.spinner-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(255, 255, 255, 0);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  display: none;
+}
+
+.loading-logo {
+  width: 320px;
+  height: 320px;
+  animation: spin 1.2s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.logo {
+  width: 260px;
+  height: 260px;
+  margin-top: -15px;
+  object-fit: contain;
+  margin-right: 20px;
+}
+
+.site-name {
+  font-size: 42px;
+  letter-spacing: 6px;
+  font-weight: bolder;
+}
+
+
+/* ===================================== */
+/* Container and Sidebar */
+/* ===================================== */
+.container {
+  display: flex;
+  height: calc(100vh - 120px);
+  width: 100%;
+  overflow: hidden;
+}
+
+.sidebar {
+  width: 320px;
+  background-color: #5a3620;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  flex-shrink: 0;
+}
+
+.nav-menu ul {
+  list-style: none;
+  padding: 0;
+  padding-top: 10px;
+  font-weight: 400;
+  margin: 20px 0; 
+ 
+}
+
+.nav-menu li {
+  margin: 20px 0;
+
+}
+
+.nav-menu a {
+  display: flex;
+  align-items: center;
+  color: white;
+  font-size: larger;
+  letter-spacing: 2px;
+  text-decoration: none;
+  padding: 10px;
+
+  border-radius: 6px;
+  transition: background 0.3s;
+}
+
+.nav-menu a:hover,
+.nav-menu a.active {
+  background-color: #754329;
+}
+
+/* ===================================== */
+/* Main Content Area */
+/* ===================================== */
+.main-content {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 30px;
+  overflow-y: auto;
+}
+
+.main-content header h2 {
+  font-weight: bold;
+  font-size: 40px;
+  color: #754120;
+  margin-top: -5px;
+}
+
+/* ===================================== */
+/* Special Section: User Tables ONLY */
+/* ===================================== */
+.user-tables .table-section {
+  margin-bottom: 30px;
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 16px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+.user-tables table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.user-tables th,
+.user-tables td {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+.user-tables th {
+  background-color: #6f3b26;
+  color: white;
+}
+
+.user-tables tr:nth-child(even) {
+  background-color: #f4f4f4;
+}
+
+.user-tables a {
+  color: #6f3b26;
+  text-decoration: none;
+}
+
+.user-tables a:hover {
+  text-decoration: underline;
+}
+
+/* ===================================== */
+/* Responsive Tweaks */
+/* ===================================== */
+@media (max-width: 768px) {
+  .container {
+    flex-direction: column;
+  }
+
+  .main-content {
+    padding: 20px;
+  }
+
+  .sidebar {
+    width: 100%;
+    padding: 20px;
+  }
+}

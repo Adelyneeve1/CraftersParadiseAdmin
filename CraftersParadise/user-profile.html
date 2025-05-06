@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>User Profile Flip Card</title>
+  <link rel="stylesheet" href="user-profile.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+</head>
+<body>
+  <div id="spinner-overlay" class="spinner-overlay">
+    <img src="images/logoo.png" alt="Loading..." class="loading-logo">
+  </div>
+  
+  <!-- Back Button -->
+  <div style="position: absolute; top: 30px; left:50px;">
+    <button onclick="history.back()" style="background-color: transparent; border: none; font-size: 18px; cursor: pointer;">
+      <i class="fas fa-arrow-left"></i> 
+    </button>
+  </div>
+
+  <div class="container">
+    <div class="book">
+      <div class="book-inner">
+        <!-- Front -->
+        <div class="cover">
+          <div class="profile-box">
+            <img id="shop-pic" src="images/defaultprof.png" alt="Shop Profile Picture">
+            <h2 id="shop-name">Shop Name</h2>
+            <p id="shop-description">Shop Description</p>
+            <p id="shop-address"><i class="fas fa-map-marker-alt"></i> Shop Address</p>
+          </div>
+        </div>
+        <!-- Back -->
+        <div class="back">
+          <div class="profile-box">
+            <img id="profile-pic" src="images/defaultprof.png" alt="User Profile Picture">
+            <h2 id="user-name">User Name</h2>
+            <p id="user-location"><i class="fas fa-map-marker-alt"></i> User Location</p>
+            <p id="user-email"><i class="fas fa-envelope"></i>User Email</p>
+            <p id="user-contact"><i class="fas fa-phone"></i> User Contact</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 📋 Account Info Table -->
+    <div class="account-info">
+      <table>
+        <thead>
+          <tr>
+            <th>Created Account Date</th>
+            <th>Last Login</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td id="created-date">Loading...</td>
+            <td id="last-login">Loading...</td>
+            <td id="status">Loading...</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+    import { getDatabase, ref, get, child } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+  
+    const firebaseConfig = {
+      apiKey: "AIzaSyCdp-AWmi1GrcrCYrEcog6rfhRygrt0uRc",
+      authDomain: "craftersparadise-8c962.firebaseapp.com",
+      projectId: "craftersparadise-8c962",
+      storageBucket: "craftersparadise-8c962.appspot.com",
+      messagingSenderId: "419818070255",
+      appId: "1:419818070255:web:434b87d32020bf3aa67b1a",
+      databaseURL: "https://craftersparadise-8c962-default-rtdb.firebaseio.com"
+    };
+  
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    const auth = getAuth(app);
+  
+    document.addEventListener('DOMContentLoaded', () => {
+      const spinner = document.getElementById("spinner-overlay");
+      spinner.style.display = "flex";
+  
+      onAuthStateChanged(auth, async (user) => {
+        if (!user) {
+          window.location.href = 'login.html';
+          return;
+        }
+  
+        const ownerId = localStorage.getItem('selectedOwnerId');
+        if (!ownerId) {
+          alert('No user selected.');
+          window.location.href = 'subscription.html';
+          return;
+        }
+  
+        const dbRef = ref(db);
+        try {
+          const userSnap = await get(child(dbRef, `users/${ownerId}`));
+          if (userSnap.exists()) {
+            const userData = userSnap.val();
+  
+            const statusEl = document.getElementById('status');
+            const isActive = String(userData.isVerified) === 'false';
+            statusEl.textContent = isActive ? 'Active' : 'Inactive';
+            statusEl.style.color = isActive ? 'green' : 'red';
+            statusEl.style.fontWeight = 'bold';
+  
+            document.getElementById('profile-pic').src = userData.profilePicUrl || 'images/defaultprof.png';
+            document.getElementById('user-name').textContent = `${userData.firstName || ''} ${userData.lastName || ''}`.trim();
+            document.getElementById('user-location').innerHTML = `<i class="fas fa-map-marker-alt"></i> ${userData.address || 'No Location'}`;
+            document.getElementById('user-email').innerHTML = `<i class="fas fa-envelope"></i> ${userData.email || 'No Email'}`;
+            document.getElementById('user-contact').innerHTML = `<i class="fas fa-phone"></i> ${userData.phone || 'No Contact Number'}`;
+          }
+  
+          const shopsSnap = await get(child(dbRef, `shops`));
+          if (shopsSnap.exists()) {
+            const shops = shopsSnap.val();
+            const shop = Object.values(shops).find(s => s.ownerId === ownerId);
+            if (shop) {
+              document.getElementById('shop-pic').src = shop.storePhotoUrl || 'images/defaultprof.png';
+              document.getElementById('shop-name').textContent = shop.storeName || 'No Store Name';
+              document.getElementById('shop-description').textContent = shop.storeDescription || '';
+              document.getElementById('shop-address').innerHTML = `<i class="fas fa-map-marker-alt"></i> ${shop.shopAddress || ''}`;
+            }
+          }
+        } catch (err) {
+          console.error("Error loading profile:", err);
+          alert('Failed to load profile.');
+        } finally {
+          spinner.style.display = "none";
+        }
+      });
+    });
+  </script>
+  
+</body>
+</html>
